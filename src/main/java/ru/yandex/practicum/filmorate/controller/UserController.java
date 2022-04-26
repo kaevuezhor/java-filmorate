@@ -19,10 +19,10 @@ public class UserController extends Controller<User>{
         if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             return false;
         }
-        if (user.getNickname().isBlank()) {
-            user.setNickname(user.getLogin());
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
-        if (user.getBirthdate().isAfter(LocalDate.now())) {
+        if (user.getBirthday().isAfter(LocalDate.now())) {
             return false;
         }
         return true;
@@ -34,8 +34,8 @@ public class UserController extends Controller<User>{
                 id,
                 user.getEmail(),
                 user.getLogin(),
-                user.getNickname(),
-                user.getBirthdate()
+                user.getName(),
+                user.getBirthday()
         );
     }
 

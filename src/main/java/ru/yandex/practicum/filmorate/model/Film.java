@@ -12,8 +12,8 @@ import java.time.LocalDate;
 public class Film implements Identifiable{
 
     private final int id;
-    @NotBlank
-    private String title;
+    //@NotBlank
+    private String name;
     private String description;
     private LocalDate releaseDate;
     private Duration duration;

@@ -13,7 +13,7 @@ public class FilmController extends Controller<Film>{
 
     @Override
     protected Boolean validate(Film film) {
-        if (film.getTitle().isBlank()) {
+        if (film.getName().isBlank()) {
             return false;
         }
         if (film.getDescription().length() > 200) {
@@ -32,7 +32,7 @@ public class FilmController extends Controller<Film>{
     protected Film convert(int id, Film film) {
         return new Film(
                 id,
-                film.getTitle(),
+                film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration()

@@ -13,11 +13,11 @@ public class User implements Identifiable{
 
     private final int id;
     @NotBlank
-    @Email
+    //@Email
     private String email;
     @NotBlank
     private final String login;
-    private String nickname;
-    private LocalDate birthdate;
+    private String name;
+    private LocalDate birthday;
 
 }
