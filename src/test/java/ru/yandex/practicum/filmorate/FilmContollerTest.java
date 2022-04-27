@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.Duration;
@@ -23,7 +23,7 @@ public class FilmContollerTest {
     }
 
     @Test
-    public void shouldGetFilms() {
+    public void shouldGetFilms() throws ValidationException {
         Film film = new Film(
                 1,
                 "Киборг-убица",
@@ -42,7 +42,7 @@ public class FilmContollerTest {
                 "Описание",
                 LocalDate.of(1984,1,1),
                 Duration.ofMinutes(108));
-        assertThrows(ValidateException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             controller.create(film);
         });
     }
@@ -57,8 +57,7 @@ public class FilmContollerTest {
                         "еееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееееее",
                 LocalDate.of(1984,1,1),
                 Duration.ofMinutes(108));
-        System.out.println(film.getDescription().length());
-        assertThrows(ValidateException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             controller.create(film);
         });
     }
@@ -71,7 +70,7 @@ public class FilmContollerTest {
                 "Описание",
                 LocalDate.of(1888,8,8),
                 Duration.ofMinutes(108));
-        assertThrows(ValidateException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             controller.create(film);
         });
     }
@@ -84,7 +83,7 @@ public class FilmContollerTest {
                 "Описание",
                 LocalDate.of(1984,1,1),
                 Duration.ofMinutes(-108));
-        assertThrows(ValidateException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             controller.create(film);
         });
     }

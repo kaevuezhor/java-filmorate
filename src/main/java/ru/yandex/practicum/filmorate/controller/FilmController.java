@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -13,7 +14,7 @@ public class FilmController extends Controller<Film>{
 
     @Override
     protected Boolean validate(Film film) {
-        if (film.getName().isBlank()) {
+        if (!StringUtils.hasText(film.getName())) {
             return false;
         }
         if (film.getDescription().length() > 200) {

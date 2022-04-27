@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -13,13 +14,13 @@ public class UserController extends Controller<User>{
 
     @Override
     protected Boolean validate(User user) {
-        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+        if (!StringUtils.hasText(user.getEmail()) || !user.getEmail().contains("@")) {
             return false;
         }
-        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+        if (!StringUtils.hasText(user.getLogin()) || user.getLogin().contains(" ")) {
             return false;
         }
-        if (user.getName() == null || user.getName().isBlank()) {
+        if (!StringUtils.hasText(user.getName())) {
             user.setName(user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {

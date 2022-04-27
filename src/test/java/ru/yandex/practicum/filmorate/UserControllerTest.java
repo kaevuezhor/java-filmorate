@@ -3,11 +3,10 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +21,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void shouldGetAllUsers() {
+    public void shouldGetAllUsers() throws ValidationException {
         User user = new User(
                 1,
                 "email@ya.ru",
@@ -48,7 +47,7 @@ public class UserControllerTest {
                 "login",
                 "nickname",
                 LocalDate.of(2000,1,1));
-        assertThrows(ValidateException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             controller.create(user);
         });
     }
@@ -61,7 +60,7 @@ public class UserControllerTest {
                 "login",
                 "nickname",
                 LocalDate.of(2000,1,1));
-        assertThrows(ValidateException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             controller.create(user);
         });
     }
@@ -74,7 +73,7 @@ public class UserControllerTest {
                 "",
                 "nickname",
                 LocalDate.of(2000,1,1));
-        assertThrows(ValidateException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             controller.create(user);
         });
     }
@@ -87,7 +86,7 @@ public class UserControllerTest {
                 "log in",
                 "nickname",
                 LocalDate.of(2000,1,1));
-        assertThrows(ValidateException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             controller.create(user);
         });
     }
@@ -100,7 +99,7 @@ public class UserControllerTest {
                 "login",
                 "nickname",
                 LocalDate.of(2025,10,25));
-        assertThrows(ValidateException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             controller.create(user);
         });
     }

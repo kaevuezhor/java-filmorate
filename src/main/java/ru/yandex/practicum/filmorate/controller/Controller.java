@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Identifiable;
 
 import javax.validation.Valid;
@@ -20,18 +20,18 @@ public abstract class Controller<T extends Identifiable> {
     }
 
     @PostMapping()
-    public void create(@Valid @RequestBody T t) throws ValidateException {
+    public void create(@Valid @RequestBody T t) throws ValidationException {
         if (!validate(t)) {
-            throw new ValidateException("Ошибка валидации");
+            throw new ValidationException("Ошибка валидации");
         }
         int id = data.size() + 1;
         data.put(id, convert(id, t));
     }
 
     @PutMapping()
-    public void update(@Valid @RequestBody T t) {
+    public void update(@Valid @RequestBody T t) throws ValidationException {
         if (!validate(t) || !data.containsKey(t.getId())) {
-            throw new ValidateException("Ошибка валидации");
+            throw new ValidationException("Ошибка валидации");
         }
         data.put(t.getId(), t);
     }
