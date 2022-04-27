@@ -1,0 +1,43 @@
+package ru.yandex.practicum.filmorate.controller;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Film;
+
+import java.time.LocalDate;
+
+@RequestMapping("/films")
+@RestController
+@Slf4j
+public class FilmController extends Controller<Film>{
+
+    @Override
+    protected Boolean validate(Film film) {
+        if (!StringUtils.hasText(film.getName())) {
+            return false;
+        }
+        if (film.getDescription().length() > 200) {
+            return false;
+        }
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            return false;
+        }
+        if (film.getDuration().isNegative()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected Film convert(int id, Film film) {
+        return new Film(
+                id,
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration()
+        );
+    }
+
+}
