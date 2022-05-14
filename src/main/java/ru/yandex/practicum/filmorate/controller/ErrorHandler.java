@@ -23,4 +23,10 @@ public class ErrorHandler {
         return  new ErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleRuntimeException(final RuntimeException e) {
+        return  new ErrorResponse(e.getMessage());
+    }
+
 }
