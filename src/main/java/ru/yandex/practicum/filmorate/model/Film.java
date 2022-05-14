@@ -11,9 +11,9 @@ import java.util.Set;
 public class Film {
 
     private int id;
-    //@NotBlank
+    @NotBlank
     private String name;
-    //@NotBlank
+    @NotBlank
     private String description;
     private LocalDate releaseDate;
     private int duration;

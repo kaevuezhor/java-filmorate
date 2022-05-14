@@ -12,10 +12,10 @@ import java.util.Set;
 public class User {
 
     private int id;
-    //@NotBlank
-    //@Email
+    @NotBlank
+    @Email
     private String email;
-    //@NotBlank
+    @NotBlank
     private final String login;
     private String name;
     private LocalDate birthday;
