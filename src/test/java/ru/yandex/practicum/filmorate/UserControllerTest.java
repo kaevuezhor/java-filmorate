@@ -5,19 +5,27 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserControllerTest {
 
     UserController controller;
+    UserStorage storage;
+    UserService service;
 
     @BeforeEach
     public void beforeEach() {
-        controller = new UserController();
+        storage = new InMemoryUserStorage();
+        service = new UserService(storage);
+        controller = new UserController(service);
     }
 
     @Test
@@ -36,7 +44,7 @@ public class UserControllerTest {
                 LocalDate.of(2000,1,2));
         controller.create(user);
         controller.create(anotherUser);
-        assertTrue(List.of(user, anotherUser).containsAll(controller.findAll().values()));
+        assertTrue(List.of(user, anotherUser).containsAll(controller.findAll()));
     }
 
     @Test
