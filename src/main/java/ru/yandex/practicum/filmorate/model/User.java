@@ -19,7 +19,7 @@ public class User {
     private final String login;
     private String name;
     private LocalDate birthday;
-    private Set<Integer> friends = new HashSet<>();
+    private Set<Integer> friends;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
