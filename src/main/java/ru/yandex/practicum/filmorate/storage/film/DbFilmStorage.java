@@ -29,7 +29,7 @@ public class DbFilmStorage implements FilmStorage{
         String sql = "SELECT * FROM film";
         return new HashMap<>(jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs)).stream()
                 .map(this::loadLikes)
-                .collect(Collectors.toMap((f) -> f.getId(), (f) -> f)));
+                .collect(Collectors.toMap(Film::getId, (f) -> f)));
     }
 
     @Override
@@ -76,12 +76,9 @@ public class DbFilmStorage implements FilmStorage{
     @Override
     public Optional<Film> find(int id) {
         String sql = "SELECT * FROM film WHERE film_id = ? ;";
-        return Optional.of(
-                jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id).stream()
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id).stream()
                         .map(this::loadLikes)
-                        .collect(Collectors.toList())
-                        .get(0)
-        );
+                        .findFirst();
     }
 
     @Override

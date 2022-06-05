@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/films")
 @RestController
@@ -28,7 +29,7 @@ public class FilmController{
     }
 
     @GetMapping("/{id}")
-    public Film find(@PathVariable("id") Integer filmId) throws FilmNotFoundException {
+    public Optional<Film> find(@PathVariable("id") Integer filmId) throws FilmNotFoundException {
         return filmService.find(filmId);
     }
 

@@ -7,9 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,13 +26,14 @@ public class FilmService {
         return new ArrayList<>(filmStorage.findAll().values());
     }
 
-    public Film find(int filmId) throws FilmNotFoundException {
+    public Optional<Film> find(int filmId) throws FilmNotFoundException {
         if (!isExistingFilm(filmId)) {
             throw new FilmNotFoundException(String.format(
                     "Фильм с id %s не найден",
                     filmId));
         }
-        return filmStorage.find(filmId).get();
+
+        return filmStorage.find(filmId);
     }
 
     public Film create(Film film) {
@@ -66,7 +65,10 @@ public class FilmService {
                     "Пользователь с id %s не найден",
                     userId));
         }
-        filmStorage.find(filmId).get().getUsersLiked().add(userId);
+        filmStorage.find(filmId).stream()
+                .map(Film::getUsersLiked)
+                .map(s -> s.add(userId))
+                .close();
         filmStorage.addLike(filmId, userId);
     }
 

@@ -16,12 +16,4 @@ public interface UserStorage {
     void delete(int id);
 
     Optional<User> find(int id);
-
-    void sendFriendRequest(int userId, int friendId);
-
-    boolean hasFriendResponse(int userId, int friendId);
-
-    void confirmFriendRequest(int userId, int friendId);
-
-    void declineFriendRequest(int userId, int friendId);
 }

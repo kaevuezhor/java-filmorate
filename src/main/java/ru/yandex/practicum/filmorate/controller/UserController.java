@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/users")
 @RestController
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User find(@PathVariable("id") Integer id) throws UserNotFoundException {
+    public Optional<User> find(@PathVariable("id") Integer id) throws UserNotFoundException {
         return userService.find(id);
     }
 
@@ -58,19 +59,19 @@ public class UserController {
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable("id") Integer userId,
                              @PathVariable("friendId") Integer friendId
-    ) {
+    ) throws UserNotFoundException {
         userService.deleteFriend(userId, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable("id") Integer userId) {
+    public List<User> getFriends(@PathVariable("id") Integer userId) throws UserNotFoundException {
         return userService.getFriends(userId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable("id") Integer userId,
                              @PathVariable("otherId") Integer otherId
-    ) {
+    ) throws UserNotFoundException {
         return userService.getCommonFriends(userId, otherId);
     }
 

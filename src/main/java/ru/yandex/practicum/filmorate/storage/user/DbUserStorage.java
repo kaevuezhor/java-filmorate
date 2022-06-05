@@ -71,72 +71,9 @@ public class DbUserStorage implements UserStorage{
     @Override
     public Optional<User> find(int id) {
         String sql = "SELECT * FROM users WHERE user_id = ? ;";
-        return Optional.of(
-                jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id).stream()
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id).stream()
                         .map(this::loadFriends)
-                        .collect(Collectors.toList())
-                        .get(0)
-        );
-    }
-
-    @Override
-    public void sendFriendRequest(int userId, int friendId) {
-        if (userId == friendId) {
-            return;
-        }
-        String sql = "INSERT INTO user_friend (user_id, friend_id, status)" +
-                "VALUES (?, ?, 'NOT ACCEPTED');" ;
-        jdbcTemplate.update(sql,
-                userId,
-                friendId
-        );
-    }
-
-    @Override
-    public boolean hasFriendResponse(int userId, int friendId) {
-        //В ТЗ написано добавить бизнес-логику по запросам в друзья, но тесты постмана думают по-другому:(((((
-
-        /*
-        SqlRowSet sqlRows = jdbcTemplate.queryForRowSet(
-                "SELECT status FROM user_friend WHERE user_id = ? AND friend_Id = ?;",
-                friendId,
-                userId
-        );
-        if (sqlRows.next()) {
-            return true;
-        }
-        return false;
-        */
-        return true;
-    }
-
-    @Override
-    public void confirmFriendRequest(int userId, int friendId) {
-        String sql = "UPDATE user_friend SET " +
-                "status = 'ACCEPTED'" +
-                "where user_id = ? AND friend_id = ?";
-        jdbcTemplate.update(sql,
-                userId,
-                friendId
-        );
-        jdbcTemplate.update(sql,
-                friendId,
-                userId
-        );
-    }
-
-    public void declineFriendRequest(int userId, int friendId) {
-        String sql = "UPDATE user_friend SET " +
-                "status = 'NOT ACCEPTED'" +
-                "where user_id = ? AND friend_id = ?";
-        jdbcTemplate.update(sql,
-                userId,
-                friendId
-        );
-        jdbcTemplate.update(sql,
-                friendId,
-                userId
-        );
+                        .findFirst();
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
@@ -152,7 +89,7 @@ public class DbUserStorage implements UserStorage{
 
     private User loadFriends(User user) {
         SqlRowSet sqlRows = jdbcTemplate.queryForRowSet(
-                "SELECT friend_id FROM user_friend WHERE user_id = ? and status = 'ACCEPTED'",
+                "SELECT friend_id FROM user_friend WHERE user_id = ?",
                 user.getId()
         );
         while (sqlRows.next()) {

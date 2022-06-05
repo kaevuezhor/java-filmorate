@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS user_friend
 (
     user_id int REFERENCES users (user_id),
     friend_id int REFERENCES users (user_id),
-    status ENUM('ACCEPTED', 'NOT ACCEPTED'),
     PRIMARY KEY (user_id, friend_id)
 );
 
