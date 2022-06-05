@@ -29,7 +29,7 @@ public class UserService {
                     "Пользователь с id %s не найден",
                     id));
         }
-        return userStorage.find(id);
+        return userStorage.find(id).get();
     }
 
     public User create(User user) {
@@ -56,39 +56,32 @@ public class UserService {
                     "Пользователь с id %s не найден",
                     friendId));
         }
-        userStorage.find(userId)
-                .getFriends()
-                .add(friendId);
-        userStorage.find(friendId)
-                .getFriends()
-                .add(userId);
+        userStorage.sendFriendRequest(userId, friendId);
+        if (userStorage.hasFriendResponse(userId, friendId)) {
+            userStorage.confirmFriendRequest(userId, friendId);
+        }
     }
 
     public void deleteFriend(int userId, int friendId) {
-        userStorage.find(userId)
-                .getFriends()
-                .remove(userStorage.find(friendId));
-        userStorage.find(friendId)
-                .getFriends()
-                .remove(userStorage.find(userId));
+        userStorage.declineFriendRequest(userId, friendId);
+        userStorage.declineFriendRequest(friendId, userId);
     }
 
     public List<User> getFriends(int userId) {
-        return userStorage.find(userId).getFriends().stream()
-                .map(u -> userStorage.find(u))
+        return userStorage.find(userId).get().getFriends().stream()
+                .map(u -> userStorage.find(u).get())
                 .collect(Collectors.toList());
     }
 
     public List<User> getCommonFriends(int userId, int otherId) {
-        Set<Integer> commonFriends = new HashSet<>(userStorage.find(userId).getFriends());
-        commonFriends.retainAll(userStorage.find(otherId).getFriends());
+        Set<Integer> commonFriends = new HashSet<>(userStorage.find(userId).get().getFriends());
+        commonFriends.retainAll(userStorage.find(otherId).get().getFriends());
         return commonFriends.stream()
-                .map(u -> userStorage.find(u))
+                .map(u -> userStorage.find(u).get())
                 .collect(Collectors.toList());
     }
 
     public boolean isExistingUser(int id) {
         return userStorage.findAll().containsKey(id);
     }
-
 }

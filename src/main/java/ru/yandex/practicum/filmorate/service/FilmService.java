@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -19,7 +18,7 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
-    @Autowired
+
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
@@ -35,12 +34,11 @@ public class FilmService {
                     "Фильм с id %s не найден",
                     filmId));
         }
-        return filmStorage.find(filmId);
+        return filmStorage.find(filmId).get();
     }
 
     public Film create(Film film) {
-        filmStorage.create(film);
-        return filmStorage.find(film.getId());
+        return filmStorage.create(film);
     }
 
     public Film update(Film film) throws FilmNotFoundException {
@@ -50,7 +48,7 @@ public class FilmService {
                     film.getId()));
         }
         filmStorage.update(film);
-        return filmStorage.find(film.getId());
+        return filmStorage.find(film.getId()).get();
     }
 
     public boolean isExistingFilm(int filmId) {
@@ -68,7 +66,8 @@ public class FilmService {
                     "Пользователь с id %s не найден",
                     userId));
         }
-        filmStorage.find(filmId).getUsersLiked().add(userId);
+        filmStorage.find(filmId).get().getUsersLiked().add(userId);
+        filmStorage.addLike(filmId, userId);
     }
 
     public void removeLike(int filmId, int userId) throws FilmNotFoundException, UserNotFoundException {
@@ -82,7 +81,7 @@ public class FilmService {
                     "Пользователь с id %s не найден",
                     userId));
         }
-        filmStorage.find(filmId).getUsersLiked().remove(userId);
+        filmStorage.removeLike(filmId, userId);
     }
 
     public List<Film> getPopular(int count) {

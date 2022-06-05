@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -35,7 +36,28 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User find(int id) {
-        return data.get(id);
+    public Optional<User> find(int id) {
+        return Optional.of(data.get(id));
+    }
+
+    @Override
+    public void sendFriendRequest(int userId, int friendId) {
+        data.get(userId).getFriends().add(friendId);
+    }
+
+    @Override
+    public boolean hasFriendResponse(int userId, int friendId) {
+        return true;
+    }
+
+    @Override
+    public void confirmFriendRequest(int userId, int friendId) {
+        data.get(friendId).getFriends().add(userId);
+    }
+
+    @Override
+    public void declineFriendRequest(int userId, int friendId) {
+        data.get(userId).getFriends().remove(friendId);
+        data.get(friendId).getFriends().remove(userId);
     }
 }
