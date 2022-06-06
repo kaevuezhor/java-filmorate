@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.user;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Friendship;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,78 +61,4 @@ public class UserFriendshipOnRequest implements UserFriendship {
     private Friendship makeFriendship(ResultSet rs) throws SQLException {
         return new Friendship(rs.getInt("user_id"), rs.getInt("friend_id"));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-    
-
-    @Override
-    public void sendFriendRequest(int userId, int friendId) {
-        if (userId == friendId) {
-            return;
-        }
-        String sql = "INSERT INTO user_friend (user_id, friend_id, status)" +
-                "VALUES (?, ?);" ;
-        jdbcTemplate.update(sql,
-                userId,
-                friendId
-        );
-    }
-
-    @Override
-    public boolean hasFriendResponse(int userId, int friendId) {
-        SqlRowSet sqlRows = jdbcTemplate.queryForRowSet(
-                "SELECT status FROM user_friend WHERE user_id = ? AND friend_Id = ?;",
-                friendId,
-                userId
-        );
-        if (sqlRows.next()) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void confirmFriendRequest(int userId, int friendId) {
-        String sql = "UPDATE user_friend SET " +
-                "status = 'ACCEPTED'" +
-                "where user_id = ? AND friend_id = ?";
-        jdbcTemplate.update(sql,
-                userId,
-                friendId
-        );
-        jdbcTemplate.update(sql,
-                friendId,
-                userId
-        );
-    }
-
-    @Override
-    public void declineFriendRequest(int userId, int friendId) {
-        String sql = "UPDATE user_friend SET " +
-                "status = 'NOT ACCEPTED'" +
-                "where user_id = ? AND friend_id = ?";
-        jdbcTemplate.update(sql,
-                userId,
-                friendId
-        );
-        jdbcTemplate.update(sql,
-                friendId,
-                userId
-        );
-    }
-
-     */
 }

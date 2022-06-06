@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -11,16 +12,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-
-
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
 
     public List<Film> findAll() {
         return new ArrayList<>(filmStorage.findAll().values());
@@ -67,8 +63,7 @@ public class FilmService {
         }
         filmStorage.find(filmId).stream()
                 .map(Film::getUsersLiked)
-                .map(s -> s.add(userId))
-                .close();
+                .forEach(s -> s.add(userId));
         filmStorage.addLike(filmId, userId);
     }
 

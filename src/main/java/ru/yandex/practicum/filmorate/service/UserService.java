@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -13,16 +14,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserStorage userStorage;
     private final UserFriendship userFriendship;
-
-    @Autowired
-    public UserService(UserStorage userStorage, UserFriendship userFriendship) {
-        this.userStorage = userStorage;
-        this.userFriendship = userFriendship;
-    }
 
     public List<User> findAll() { return new ArrayList<>(userStorage.findAll().values()); }
 
