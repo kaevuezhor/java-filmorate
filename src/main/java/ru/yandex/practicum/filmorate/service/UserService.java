@@ -1,29 +1,28 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.UserFriendship;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserStorage userStorage;
+    private final UserFriendship userFriendship;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    public List<User> findAll() { return new ArrayList<>(userStorage.findAll().values()); }
 
-    public List<User> findAll() { return userStorage.findAll().values().stream().collect(Collectors.toList()); }
-
-    public User find(int id) throws UserNotFoundException {
+    public Optional<User> find(int id) throws UserNotFoundException {
         if (!isExistingUser(id)) {
             throw new UserNotFoundException(String.format(
                     "Пользователь с id %s не найден",
@@ -56,39 +55,75 @@ public class UserService {
                     "Пользователь с id %s не найден",
                     friendId));
         }
-        userStorage.find(userId)
-                .getFriends()
-                .add(friendId);
-        userStorage.find(friendId)
-                .getFriends()
-                .add(userId);
+        userFriendship.addFriend(userId, friendId);
     }
 
-    public void deleteFriend(int userId, int friendId) {
-        userStorage.find(userId)
-                .getFriends()
-                .remove(userStorage.find(friendId));
-        userStorage.find(friendId)
-                .getFriends()
-                .remove(userStorage.find(userId));
+
+
+    public void deleteFriend(int userId, int friendId) throws UserNotFoundException {
+        if (!isExistingUser(userId)) {
+            throw new UserNotFoundException(String.format(
+                    "Пользователь с id %s не найден",
+                    userId));
+        }
+        if (!isExistingUser(friendId)) {
+            throw new UserNotFoundException(String.format(
+                    "Пользователь с id %s не найден",
+                    friendId));
+        }
+        userFriendship.deleteFriend(userId, friendId);
     }
 
-    public List<User> getFriends(int userId) {
-        return userStorage.find(userId).getFriends().stream()
-                .map(u -> userStorage.find(u))
+
+
+    public List<User> getFriends(int userId) throws UserNotFoundException {
+        if (!isExistingUser(userId)) {
+            throw new UserNotFoundException(String.format(
+                    "Пользователь с id %s не найден",
+                    userId));
+        }
+        return userFriendship.getFriends(userId).stream()
+                .map(id -> {
+                    try {
+                        return find(id);
+                    } catch (UserNotFoundException e) {
+                        e.printStackTrace();
+                        return Optional.<User>empty();
+                    }
+                })
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
     }
 
-    public List<User> getCommonFriends(int userId, int otherId) {
-        Set<Integer> commonFriends = new HashSet<>(userStorage.find(userId).getFriends());
-        commonFriends.retainAll(userStorage.find(otherId).getFriends());
-        return commonFriends.stream()
-                .map(u -> userStorage.find(u))
+
+
+    public List<User> getCommonFriends(int userId, int otherId) throws UserNotFoundException {
+        if (!isExistingUser(userId)) {
+            throw new UserNotFoundException(String.format(
+                    "Пользователь с id %s не найден",
+                    userId));
+        }
+        if (!isExistingUser(otherId)) {
+            throw new UserNotFoundException(String.format(
+                    "Пользователь с id %s не найден",
+                    otherId));
+        }
+        return userFriendship.getCommonFriends(userId, otherId).stream()
+                .map(id -> {
+                    try {
+                        return find(id);
+                    } catch (UserNotFoundException e) {
+                        e.printStackTrace();
+                        return Optional.<User>empty();
+                    }
+                }).filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
     }
+
 
     public boolean isExistingUser(int id) {
         return userStorage.findAll().containsKey(id);
     }
-
 }

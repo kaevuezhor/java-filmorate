@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -8,39 +8,32 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
-
     public List<Film> findAll() {
         return new ArrayList<>(filmStorage.findAll().values());
     }
 
-    public Film find(int filmId) throws FilmNotFoundException {
+    public Optional<Film> find(int filmId) throws FilmNotFoundException {
         if (!isExistingFilm(filmId)) {
             throw new FilmNotFoundException(String.format(
                     "Фильм с id %s не найден",
                     filmId));
         }
+
         return filmStorage.find(filmId);
     }
 
     public Film create(Film film) {
-        filmStorage.create(film);
-        return filmStorage.find(film.getId());
+        return filmStorage.create(film);
     }
 
     public Film update(Film film) throws FilmNotFoundException {
@@ -50,7 +43,7 @@ public class FilmService {
                     film.getId()));
         }
         filmStorage.update(film);
-        return filmStorage.find(film.getId());
+        return filmStorage.find(film.getId()).get();
     }
 
     public boolean isExistingFilm(int filmId) {
@@ -68,7 +61,10 @@ public class FilmService {
                     "Пользователь с id %s не найден",
                     userId));
         }
-        filmStorage.find(filmId).getUsersLiked().add(userId);
+        filmStorage.find(filmId).stream()
+                .map(Film::getUsersLiked)
+                .forEach(s -> s.add(userId));
+        filmStorage.addLike(filmId, userId);
     }
 
     public void removeLike(int filmId, int userId) throws FilmNotFoundException, UserNotFoundException {
@@ -82,7 +78,7 @@ public class FilmService {
                     "Пользователь с id %s не найден",
                     userId));
         }
-        filmStorage.find(filmId).getUsersLiked().remove(userId);
+        filmStorage.removeLike(filmId, userId);
     }
 
     public List<Film> getPopular(int count) {
